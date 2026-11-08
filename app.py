@@ -43,48 +43,31 @@ FICHIER_BASE = (
 @st.cache_data
 def charger_table(nom_table):
 
-   # Vérifier que le fichier de la base existe réellement.
-if not FICHIER_BASE.is_file():
-    raise FileNotFoundError(
-        f"Base de données introuvable : {FICHIER_BASE}"
+    # Vérifier que le fichier de la base de données existe.
+    if not FICHIER_BASE.is_file():
+        raise FileNotFoundError(
+            f"Base de données introuvable : {FICHIER_BASE}"
+        )
+
+    # Ouvrir la base SQLite en lecture seule.
+    connexion = sqlite3.connect(
+        FICHIER_BASE.as_uri() + "?mode=ro",
+        uri=True
     )
 
-# Ouvrir la base SQLite en lecture seule.
-# Cela évite de demander des droits d'écriture au serveur.
+    try:
+        # Charger la table demandée dans un DataFrame Pandas.
+        donnees = pd.read_sql_query(
+            f"SELECT * FROM {nom_table}",
+            connexion
+        )
 
-connexion = sqlite3.connect(
-    FICHIER_BASE.as_uri() + "?mode=ro",
-    uri=True
-)
+        # Retourner les données chargées.
+        return donnees
 
-    # Chargement de la table dans Pandas
-    donnees = pd.read_sql_query(
-        f"SELECT * FROM {nom_table}",
-        connexion
-    )
-
-    # Fermeture de la connexion
-    connexion.close()
-
-    return donnees
-
-
-# Chargement des données
-prix_marches = charger_table("prix_marches")
-
-prix_national = charger_table("prix_national")
-
-indicateurs = charger_table("indicateurs_generaux")
-
-# Conversion des dates
-prix_marches["price_date"] = pd.to_datetime(
-    prix_marches["price_date"]
-)
-
-prix_national["price_date"] = pd.to_datetime(
-    prix_national["price_date"]
-)
-
+    finally:
+        # Fermer la connexion même si une erreur survient.
+        connexion.close()
 # ------------------------------------------------------------
 # 4. DICTIONNAIRE DES PRODUITS
 # ------------------------------------------------------------
