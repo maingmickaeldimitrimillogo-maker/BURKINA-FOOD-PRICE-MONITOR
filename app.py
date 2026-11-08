@@ -69,6 +69,27 @@ def charger_table(nom_table):
         # Fermer la connexion même si une erreur survient.
         connexion.close()
 # ------------------------------------------------------------
+# CHARGEMENT DES TABLES DE LA BASE DE DONNEES
+# ------------------------------------------------------------
+
+# Chargement des données des marchés.
+prix_marches = charger_table("prix_marches")
+
+# Chargement des données nationales.
+prix_national = charger_table("prix_national")
+
+# Chargement des indicateurs généraux.
+indicateurs = charger_table("indicateurs_generaux")
+
+# Conversion des dates en format datetime.
+prix_marches["price_date"] = pd.to_datetime(
+    prix_marches["price_date"]
+)
+
+prix_national["price_date"] = pd.to_datetime(
+    prix_national["price_date"]
+)
+# ------------------------------------------------------------
 # 4. DICTIONNAIRE DES PRODUITS
 # ------------------------------------------------------------
 
