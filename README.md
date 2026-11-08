@@ -83,7 +83,9 @@ Les estimations de prix proviennent d'une méthodologie utilisant notamment des 
 
 Application développée avec Streamlit.
 
-**Lien du tableau de bord :** À venir.
+### Tableau de bord en ligne
+
+[Accéder au BURKINA FOOD PRICE MONITOR](https://burkina-food-price-monitor.streamlit.app)
 
 ## 👨‍💻 Auteur
 
