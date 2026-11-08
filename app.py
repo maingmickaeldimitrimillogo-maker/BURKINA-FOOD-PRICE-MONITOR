@@ -22,9 +22,13 @@ st.set_page_config(
 # 2. CHEMIN DE LA BASE DE DONNEES
 # ------------------------------------------------------------
 
-DOSSIER_PROJET = Path(
-    r"C:\Users\USER\Documents\BURKINA_FOOD_PRICE_MONITOR"
-)
+# On identifie automatiquement le dossier qui contient app.py.
+# Cette méthode fonctionne sur Windows comme sur Linux.
+
+DOSSIER_PROJET = Path(__file__).resolve().parent
+
+# On construit le chemin vers la base SQLite.
+# La base doit se trouver dans data/database/.
 
 FICHIER_BASE = (
     DOSSIER_PROJET
@@ -32,7 +36,6 @@ FICHIER_BASE = (
     / "database"
     / "burkina_food_price_monitor.db"
 )
-
 # ------------------------------------------------------------
 # 3. CHARGEMENT DES DONNEES SQLITE
 # ------------------------------------------------------------
@@ -40,8 +43,19 @@ FICHIER_BASE = (
 @st.cache_data
 def charger_table(nom_table):
 
-    # Connexion à la base de données
-    connexion = sqlite3.connect(FICHIER_BASE)
+   # Vérifier que le fichier de la base existe réellement.
+if not FICHIER_BASE.is_file():
+    raise FileNotFoundError(
+        f"Base de données introuvable : {FICHIER_BASE}"
+    )
+
+# Ouvrir la base SQLite en lecture seule.
+# Cela évite de demander des droits d'écriture au serveur.
+
+connexion = sqlite3.connect(
+    FICHIER_BASE.as_uri() + "?mode=ro",
+    uri=True
+)
 
     # Chargement de la table dans Pandas
     donnees = pd.read_sql_query(
